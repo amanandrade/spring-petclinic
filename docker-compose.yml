@@ -1,12 +1,31 @@
-mysql:
-  image: mysql:5.7
-  ports:
-    - "3306:3306"
-  environment:
-    - MYSQL_ROOT_PASSWORD=
-    - MYSQL_ALLOW_EMPTY_PASSWORD=true
-    - MYSQL_USER=petclinic
-    - MYSQL_PASSWORD=petclinic
-    - MYSQL_DATABASE=petclinic
-  volumes:
-    - "./conf.d:/etc/mysql/conf.d:ro"
+version: "3"
+
+services:
+      
+  webapp:
+    build: .
+    restart: always
+    env_file:
+      - .ENV
+    ports:
+      - "8080:8080"
+    networks:
+      - spring-boot-petclinic
+    depends_on:
+      - db
+
+  db:
+    image: mysql:5.7
+    container_name: db
+    restart: always
+    env_file:
+      - .ENV
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./conf.d:/etc/mysql/conf.d:ro"
+    networks:
+      - spring-boot-petclinic
+
+networks:
+  spring-boot-petclinic:
